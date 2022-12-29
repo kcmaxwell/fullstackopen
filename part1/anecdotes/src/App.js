@@ -1,5 +1,14 @@
 import { useState } from "react";
 
+const Anecdote = ({ text, votes }) => {
+  return (
+    <>
+      <p>{text}</p>
+      <p>Has {votes} votes</p>
+    </>
+  );
+};
+
 const App = () => {
   const anecdotes = [
     "If it hurts, do it more often.",
@@ -26,14 +35,33 @@ const App = () => {
     setVotes(copy);
   };
 
+  const highestVotes = () => {
+    let max = 0;
+    let maxIndex = 0;
+    for (let i = 0; i < votes.length; i++) {
+      if (votes[i] > max) {
+        maxIndex = i;
+        max = votes[i];
+      }
+    }
+
+    return maxIndex;
+  };
+
   return (
     <div>
-      {anecdotes[selected]}
-      <p>Has {votes[selected]} votes</p>
+      <h1>Anecdote of the day</h1>
+      <Anecdote text={anecdotes[selected]} votes={votes[selected]} />
       <div>
         <button onClick={addVote}>Vote</button>
         <button onClick={getRandomAnecdote}>Next Anecdote</button>
       </div>
+
+      <h1>Highest voted anecdote</h1>
+      <Anecdote
+        text={anecdotes[highestVotes()]}
+        votes={votes[highestVotes()]}
+      />
     </div>
   );
 };
