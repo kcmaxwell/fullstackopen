@@ -16,6 +16,10 @@ function App() {
     setFilter(event.target.value);
   };
 
+  const showCountryPage = (event) => {
+    setFilter(event.target.value);
+  };
+
   const filteredCountries = countries.filter((country) =>
     country.name.toLowerCase().includes(filter.toLowerCase())
   );
@@ -41,7 +45,12 @@ function App() {
           <p>Too many matches, specify another filter</p>
         ) : (
           filteredCountries.map((country) => (
-            <p key={country.name}>{country.name}</p>
+            <p key={country.name}>
+              {country.name}{" "}
+              <button value={country.name} onClick={showCountryPage}>
+                Show
+              </button>
+            </p>
           ))
         )}
       </div>
