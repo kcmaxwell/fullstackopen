@@ -19,7 +19,7 @@ function CountryView({ country }) {
     axios.get(weatherUrl).then((response) => {
       setWeather(response.data);
     });
-  }, []);
+  }, [country.capital]);
 
   return (
     <div>
