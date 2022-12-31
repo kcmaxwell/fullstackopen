@@ -13,4 +13,8 @@ const deletePerson = (id) => {
   return axios.delete(baseUrl.concat("/", id));
 };
 
-export default { getAll, addPerson, deletePerson };
+const changeNumber = (id, changedPerson) => {
+  return axios.put(baseUrl.concat("/", id), changedPerson);
+};
+
+export default { getAll, addPerson, deletePerson, changeNumber };
