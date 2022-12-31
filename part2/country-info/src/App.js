@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import CountryView from "./components/CountryView";
 
 function App() {
   const [filter, setFilter] = useState("");
@@ -32,14 +33,7 @@ function App() {
       <div>
         {filteredCountries.length === 1 ? (
           <div>
-            <h2>{filteredCountries[0].name}</h2>
-            <p>Capital: {filteredCountries[0].capital}</p>
-            <ul>
-              {filteredCountries[0].languages.map((language) => (
-                <li key={language.name}>{language.name}</li>
-              ))}
-            </ul>
-            <img src={filteredCountries[0].flag} alt="Country Flag" />
+            <CountryView country={filteredCountries[0]} />
           </div>
         ) : filteredCountries.length > 10 ? (
           <p>Too many matches, specify another filter</p>
