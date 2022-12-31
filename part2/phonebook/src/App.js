@@ -37,6 +37,12 @@ const App = () => {
     }
   };
 
+  const deletePerson = (id) => {
+    personService.deletePerson(id).then(() => {
+      setPersons(persons.filter((person) => person.id !== id));
+    });
+  };
+
   const checkDuplicate = () => {
     return persons.some((person) => person.name === newName);
   };
@@ -72,7 +78,7 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons persons={filteredNames} />
+      <Persons persons={filteredNames} deletePerson={deletePerson} />
     </div>
   );
 };
