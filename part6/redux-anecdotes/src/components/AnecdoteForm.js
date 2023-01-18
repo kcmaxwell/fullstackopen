@@ -1,8 +1,9 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { createAnecdote } from '../reducers/anecdoteReducer';
+import { setMessage, removeMessage } from '../reducers/notificationReducer';
 
-function AnecdoteForm() {
+const AnecdoteForm = () => {
   const dispatch = useDispatch();
 
   const addAnecdote = (event) => {
@@ -11,6 +12,11 @@ function AnecdoteForm() {
     const anecdote = event.target.anecdote.value;
     event.target.anecdote.value = '';
     dispatch(createAnecdote(anecdote));
+
+    dispatch(setMessage(`Created new anecdote: "${anecdote}"`));
+    setTimeout(() => {
+      dispatch(removeMessage());
+    }, 5000);
   };
 
   return (
@@ -24,6 +30,6 @@ function AnecdoteForm() {
       </form>
     </div>
   );
-}
+};
 
 export default AnecdoteForm;
