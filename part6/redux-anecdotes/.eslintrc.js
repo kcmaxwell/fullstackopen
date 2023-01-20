@@ -25,7 +25,8 @@ module.exports = {
       'no-underscore-dangle': 'off',
       'default-param-last': 'off',
       'no-case-declarations': 'off',
-      'no-param-reassign': 'off'
+      'no-param-reassign': 'off',
+      'react/prop-types': 'off'
     },
   };
   
