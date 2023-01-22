@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import {
-  Routes, Route, Link, useMatch,
+  Routes, Route, Link, Navigate, useMatch,
 } from 'react-router-dom';
 
 import Anecdote from './components/Anecdote';
+import Notification from './components/Notification';
 
 const Menu = () => {
   const padding = {
@@ -59,6 +60,7 @@ const CreateNew = (props) => {
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('');
   const [info, setInfo] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -68,10 +70,15 @@ const CreateNew = (props) => {
       info,
       votes: 0,
     });
+
+    setSubmitted(true);
   };
 
   return (
     <div>
+      {submitted
+        && <Navigate to='/' replace={true} />}
+
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -109,6 +116,7 @@ const App = () => {
       id: 2,
     },
   ]);
+  const [notification, setNotification] = useState(null);
 
   const match = useMatch('/anecdotes/:id');
   const anecdoteMatch = match
@@ -120,6 +128,11 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000);
     setAnecdotes(anecdotes.concat(anecdote));
+
+    setNotification(`A new anecdote ${anecdote.content} created!`);
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
   };
 
   // const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
@@ -139,6 +152,7 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification message={notification} />
 
       <Routes>
         <Route path='/anecdotes/:id' element={<Anecdote anecdote={anecdoteMatch} />} />
