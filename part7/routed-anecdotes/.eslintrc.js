@@ -26,7 +26,8 @@ module.exports = {
       'default-param-last': 'off',
       'no-case-declarations': 'off',
       'no-param-reassign': 'off',
-      'react/prop-types': 'off'
+      'react/prop-types': 'off',
+      'import/prefer-default-export': 'off'
     },
   };
   
