@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { setNotification } from './reducers/notificationReducer';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -7,13 +10,11 @@ import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 
-const App = () => {
+const App = (props) => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
 
   const blogFormRef = useRef();
 
@@ -31,17 +32,11 @@ const App = () => {
   }, []);
 
   const displayErrorMessage = (message) => {
-    setErrorMessage(message);
-    setTimeout(() => {
-      setErrorMessage(null);
-    }, 5000);
+    props.setNotification(message, true, 5);
   };
 
   const displaySuccessMessage = (message) => {
-    setSuccessMessage(message);
-    setTimeout(() => {
-      setSuccessMessage(null);
-    }, 5000);
+    props.setNotification(message, false, 5);
   };
 
   const handleLogin = async (event) => {
@@ -70,7 +65,7 @@ const App = () => {
     setBlogs(blogs.concat(returnedBlog));
 
     displaySuccessMessage(
-      `New blog added: ${blogObject.title} by ${blogObject.author}`,
+      `New blog added: ${blogObject.title} by ${blogObject.author}`
     );
 
     blogFormRef.current.toggleVisibility();
@@ -78,7 +73,9 @@ const App = () => {
 
   const addLike = async (likedBlog) => {
     const updatedBlog = await blogService.increaseLikes(likedBlog);
-    const newBlogs = blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog));
+    const newBlogs = blogs.map((blog) =>
+      blog.id === updatedBlog.id ? updatedBlog : blog
+    );
     setBlogs(newBlogs);
   };
 
@@ -89,18 +86,18 @@ const App = () => {
         const newBlogs = blogs.filter((blog) => blog.id !== blogToDelete.id);
         setBlogs(newBlogs);
       } else {
-        displayErrorMessage('Cannot delete another user\'s blog');
+        displayErrorMessage("Cannot delete another user's blog");
       }
     } catch (error) {
-      displayErrorMessage('Cannot delete another user\'s blog');
+      displayErrorMessage("Cannot delete another user's blog");
     }
   };
 
   if (user === null) {
     return (
       <div>
-        <Notification message={successMessage} isError={false} />
-        <Notification message={errorMessage} isError={true} />
+        <Notification isError={false} />
+        <Notification isError={true} />
         <LoginForm
           handleLogin={handleLogin}
           username={username}
@@ -113,8 +110,8 @@ const App = () => {
   }
   return (
     <div>
-      <Notification message={successMessage} isError={false} />
-      <Notification message={errorMessage} isError={true} />
+      <Notification isError={false} />
+      <Notification isError={true} />
       <h2>Blogs</h2>
       {blogs
         .sort((a, b) => {
@@ -135,11 +132,29 @@ const App = () => {
           />
         ))}
 
-      <Togglable buttonLabel="Add new blog" ref={blogFormRef}>
+      <Togglable
+        buttonLabel='Add new blog'
+        ref={blogFormRef}
+      >
         <BlogForm addBlog={addBlog} />
       </Togglable>
     </div>
   );
 };
 
-export default App;
+App.propTypes = {
+  setNotification: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  anecdotes: state.anecdotes,
+  filter: state.filter,
+});
+
+const mapDispatchToProps = {
+  setNotification,
+};
+
+const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App);
+
+export default ConnectedApp;

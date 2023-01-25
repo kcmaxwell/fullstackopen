@@ -1,7 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-function Notification({ message, isError }) {
+function Notification(props) {
+  const notification = props.isError
+    ? props.notification.errorMessage
+    : props.notification.successMessage;
+
   const style = {
     color: 'green',
     background: 'lightgrey',
@@ -14,18 +19,34 @@ function Notification({ message, isError }) {
 
   let className = 'success-message';
 
-  if (isError) { style.color = 'red'; className = 'error-message'; }
+  if (props.isError) {
+    style.color = 'red';
+    className = 'error-message';
+  }
 
-  if (message === null) {
+  if (notification === null || notification === '') {
     return null;
   }
 
-  return <div className={className} style={style}>{message}</div>;
+  return (
+    <div
+      className={className}
+      style={style}
+    >
+      {notification}
+    </div>
+  );
 }
 
 Notification.propTypes = {
-  message: PropTypes.string,
+  notification: PropTypes.object,
   isError: PropTypes.bool.isRequired,
 };
 
-export default Notification;
+const mapStateToProps = (state) => ({
+  notification: state.notification,
+});
+
+const ConnectedNotification = connect(mapStateToProps)(Notification);
+
+export default ConnectedNotification;

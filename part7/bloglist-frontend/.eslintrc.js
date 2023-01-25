@@ -7,19 +7,18 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
     'react-app',
     'airbnb-base',
+    'prettier',
   ],
-  overrides: [
-  ],
+  overrides: [],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
   },
-  plugins: [
-    'react',
-    'jest'
-  ],
+  plugins: ['react', 'jest', '@typescript-eslint'],
   rules: {
     'no-console': 'off',
     'no-underscore-dangle': 'off',
