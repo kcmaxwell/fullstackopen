@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 const Blog = ({ blog, addLike, deleteBlog }) => {
   const [visible, setVisible] = useState(false);
@@ -18,20 +19,39 @@ const Blog = ({ blog, addLike, deleteBlog }) => {
   return (
     <div style={blogStyle}>
       <div className='blog-content'>
-        {blog.title}{' by '}
+        {blog.title}
+        {' by '}
         {blog.author}
-        <button className='show-button' onClick={() => setVisible(!visible)}>
+        <button
+          className='show-button'
+          onClick={() => setVisible(!visible)}
+        >
           {visible ? 'hide' : 'view'}
         </button>
       </div>
-      <div style={showWhenVisible} className='hidden-content'>
+      <div
+        style={showWhenVisible}
+        className='hidden-content'
+      >
         <div>{blog.url}</div>
         <div id='likes'>
           Likes: {blog.likes}{' '}
-          <button className='like-button' onClick={() => addLike(blog)}>Like</button>
+          <button
+            className='like-button'
+            onClick={() => addLike(blog)}
+          >
+            Like
+          </button>
         </div>
         <div>{blog.user.name}</div>
-        <div><button id='delete-button' onClick={() => deleteBlog(blog)}>Remove</button></div>
+        <div>
+          <button
+            id='delete-button'
+            onClick={() => deleteBlog(blog)}
+          >
+            Remove
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -43,4 +63,10 @@ Blog.propTypes = {
   deleteBlog: PropTypes.func.isRequired,
 };
 
-export default Blog;
+const mapStateToProps = (state) => ({
+  blogs: state.blogs,
+});
+
+const ConnectedBlog = connect(mapStateToProps)(Blog);
+
+export default ConnectedBlog;

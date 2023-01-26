@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setNotification } from './reducers/notificationReducer';
+import { initializeBlogs } from './reducers/blogReducer';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -19,8 +20,8 @@ const App = (props) => {
   const blogFormRef = useRef();
 
   useEffect(() => {
-    blogService.getAll().then((newBlogs) => setBlogs(newBlogs));
-  }, []);
+    props.initializeBlogs();
+  }, [props]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser');
@@ -113,7 +114,7 @@ const App = (props) => {
       <Notification isError={false} />
       <Notification isError={true} />
       <h2>Blogs</h2>
-      {blogs
+      {[...props.blogs]
         .sort((a, b) => {
           if (a.likes < b.likes) {
             return 1;
@@ -144,15 +145,24 @@ const App = (props) => {
 
 App.propTypes = {
   setNotification: PropTypes.func.isRequired,
+  initializeBlogs: PropTypes.func.isRequired,
+  blogs: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string,
+      author: PropTypes.string,
+      url: PropTypes.string,
+      likes: PropTypes.number,
+    })
+  ),
 };
 
 const mapStateToProps = (state) => ({
-  anecdotes: state.anecdotes,
-  filter: state.filter,
+  blogs: state.blogs,
 });
 
 const mapDispatchToProps = {
   setNotification,
+  initializeBlogs,
 };
 
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App);
