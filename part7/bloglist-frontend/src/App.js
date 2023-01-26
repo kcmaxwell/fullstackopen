@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setNotification } from './reducers/notificationReducer';
 import { initializeBlogs } from './reducers/blogReducer';
-import Blog from './components/Blog';
+import BlogList from './components/BlogList';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import LoginForm from './components/LoginForm';
@@ -72,27 +72,27 @@ const App = (props) => {
     blogFormRef.current.toggleVisibility();
   };
 
-  const addLike = async (likedBlog) => {
-    const updatedBlog = await blogService.increaseLikes(likedBlog);
-    const newBlogs = blogs.map((blog) =>
-      blog.id === updatedBlog.id ? updatedBlog : blog
-    );
-    setBlogs(newBlogs);
-  };
+  // const addLike = async (likedBlog) => {
+  //   const updatedBlog = await blogService.increaseLikes(likedBlog);
+  //   const newBlogs = blogs.map((blog) =>
+  //     blog.id === updatedBlog.id ? updatedBlog : blog
+  //   );
+  //   setBlogs(newBlogs);
+  // };
 
-  const deleteBlog = async (blogToDelete) => {
-    try {
-      const response = await blogService.deleteBlog(blogToDelete);
-      if (response.status === 204) {
-        const newBlogs = blogs.filter((blog) => blog.id !== blogToDelete.id);
-        setBlogs(newBlogs);
-      } else {
-        displayErrorMessage("Cannot delete another user's blog");
-      }
-    } catch (error) {
-      displayErrorMessage("Cannot delete another user's blog");
-    }
-  };
+  // const deleteBlog = async (blogToDelete) => {
+  //   try {
+  //     const response = await blogService.deleteBlog(blogToDelete);
+  //     if (response.status === 204) {
+  //       const newBlogs = blogs.filter((blog) => blog.id !== blogToDelete.id);
+  //       setBlogs(newBlogs);
+  //     } else {
+  //       displayErrorMessage("Cannot delete another user's blog");
+  //     }
+  //   } catch (error) {
+  //     displayErrorMessage("Cannot delete another user's blog");
+  //   }
+  // };
 
   if (user === null) {
     return (
@@ -114,24 +114,7 @@ const App = (props) => {
       <Notification isError={false} />
       <Notification isError={true} />
       <h2>Blogs</h2>
-      {[...props.blogs]
-        .sort((a, b) => {
-          if (a.likes < b.likes) {
-            return 1;
-          }
-          if (a.likes > b.likes) {
-            return -1;
-          }
-          return 0;
-        })
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            addLike={addLike}
-            deleteBlog={deleteBlog}
-          />
-        ))}
+      <BlogList />
 
       <Togglable
         buttonLabel='Add new blog'

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 
 const Blog = ({ blog, addLike, deleteBlog }) => {
   const [visible, setVisible] = useState(false);
@@ -63,10 +62,4 @@ Blog.propTypes = {
   deleteBlog: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-  blogs: state.blogs,
-});
-
-const ConnectedBlog = connect(mapStateToProps)(Blog);
-
-export default ConnectedBlog;
+export default Blog;
