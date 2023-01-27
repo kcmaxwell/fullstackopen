@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setNotification } from './reducers/notificationReducer';
 import { initializeBlogs } from './reducers/blogReducer';
+import { setUserAction } from './reducers/userReducer';
 import BlogList from './components/BlogList';
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -15,7 +16,6 @@ const App = (props) => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
 
   const blogFormRef = useRef();
 
@@ -24,13 +24,8 @@ const App = (props) => {
   }, [props]);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedUser');
-    if (loggedUserJSON) {
-      const newUser = JSON.parse(loggedUserJSON);
-      setUser(newUser);
-      blogService.setToken(newUser.token);
-    }
-  }, []);
+    if (props.user) blogService.setToken(props.user.token);
+  }, [props]);
 
   const displayErrorMessage = (message) => {
     props.setNotification(message, true, 5);
@@ -48,8 +43,7 @@ const App = (props) => {
         username,
         password,
       });
-      setUser(newUser);
-      window.localStorage.setItem('loggedUser', JSON.stringify(newUser));
+      props.setUserAction(newUser);
       blogService.setToken(newUser.token);
 
       displaySuccessMessage(`${newUser.name} logged in`);
@@ -94,7 +88,7 @@ const App = (props) => {
   //   }
   // };
 
-  if (user === null) {
+  if (props.user === null) {
     return (
       <div>
         <Notification isError={false} />
@@ -129,6 +123,7 @@ const App = (props) => {
 App.propTypes = {
   setNotification: PropTypes.func.isRequired,
   initializeBlogs: PropTypes.func.isRequired,
+  setUserAction: PropTypes.func.isRequired,
   blogs: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string,
@@ -137,15 +132,18 @@ App.propTypes = {
       likes: PropTypes.number,
     })
   ),
+  user: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
   blogs: state.blogs,
+  user: state.user,
 });
 
 const mapDispatchToProps = {
   setNotification,
   initializeBlogs,
+  setUserAction,
 };
 
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App);
