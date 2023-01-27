@@ -1,18 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { Routes, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setNotification } from './reducers/notificationReducer';
 import { initializeBlogs } from './reducers/blogReducer';
+import { initializeUsers } from './reducers/usersReducer';
 import { setUserAction } from './reducers/userReducer';
-import BlogList from './components/BlogList';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import LoginForm from './components/LoginForm';
 import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
+import Users from './components/Users';
+import Home from './components/Home';
 
 const App = (props) => {
+  const {
+    initializeBlogs: initBlogs,
+    initializeUsers: initUsers,
+    user,
+  } = props;
+
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -20,12 +29,16 @@ const App = (props) => {
   const blogFormRef = useRef();
 
   useEffect(() => {
-    props.initializeBlogs();
-  }, [props]);
+    initBlogs();
+  }, [initBlogs]);
 
   useEffect(() => {
-    if (props.user) blogService.setToken(props.user.token);
-  }, [props]);
+    initUsers();
+  }, [initUsers]);
+
+  useEffect(() => {
+    if (user) blogService.setToken(user.token);
+  }, [user]);
 
   const displayErrorMessage = (message) => {
     props.setNotification(message, true, 5);
@@ -66,28 +79,6 @@ const App = (props) => {
     blogFormRef.current.toggleVisibility();
   };
 
-  // const addLike = async (likedBlog) => {
-  //   const updatedBlog = await blogService.increaseLikes(likedBlog);
-  //   const newBlogs = blogs.map((blog) =>
-  //     blog.id === updatedBlog.id ? updatedBlog : blog
-  //   );
-  //   setBlogs(newBlogs);
-  // };
-
-  // const deleteBlog = async (blogToDelete) => {
-  //   try {
-  //     const response = await blogService.deleteBlog(blogToDelete);
-  //     if (response.status === 204) {
-  //       const newBlogs = blogs.filter((blog) => blog.id !== blogToDelete.id);
-  //       setBlogs(newBlogs);
-  //     } else {
-  //       displayErrorMessage("Cannot delete another user's blog");
-  //     }
-  //   } catch (error) {
-  //     displayErrorMessage("Cannot delete another user's blog");
-  //   }
-  // };
-
   if (props.user === null) {
     return (
       <div>
@@ -108,7 +99,16 @@ const App = (props) => {
       <Notification isError={false} />
       <Notification isError={true} />
       <h2>Blogs</h2>
-      <BlogList />
+      <Routes>
+        <Route
+          path='/users'
+          element={<Users />}
+        />
+        <Route
+          path='/'
+          element={<Home />}
+        />
+      </Routes>
 
       <Togglable
         buttonLabel='Add new blog'
@@ -124,6 +124,7 @@ App.propTypes = {
   setNotification: PropTypes.func.isRequired,
   initializeBlogs: PropTypes.func.isRequired,
   setUserAction: PropTypes.func.isRequired,
+  initializeUsers: PropTypes.func.isRequired,
   blogs: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string,
@@ -144,6 +145,7 @@ const mapDispatchToProps = {
   setNotification,
   initializeBlogs,
   setUserAction,
+  initializeUsers,
 };
 
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App);
