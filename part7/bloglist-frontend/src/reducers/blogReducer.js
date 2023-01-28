@@ -14,7 +14,7 @@ const blogSlice = createSlice({
     },
     replaceBlog(state, action) {
       return state.map((blog) =>
-        blog === action.payload ? action.payload : blog
+        blog.id === action.payload.id ? action.payload : blog
       );
     },
   },
@@ -33,16 +33,17 @@ export const removeBlog = (blog) => async (dispatch) => {
     if (response.status === 204) {
       dispatch(deleteBlog(blog));
     } else {
-      dispatch(setNotification("Cannot delete another user's blog"));
+      dispatch(setNotification("Cannot delete another user's blog", true, 5));
     }
   } catch (error) {
-    dispatch(setNotification("Cannot delete another user's blog"));
+    dispatch(setNotification("Cannot delete another user's blog", true, 5));
   }
 };
 
 export const addLike = (blog) => async (dispatch) => {
   const updatedBlog = await blogService.increaseLikes(blog);
   dispatch(replaceBlog(updatedBlog));
+  dispatch(setNotification('Liked blog', false, 5));
 };
 
 export default blogSlice.reducer;

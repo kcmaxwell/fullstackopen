@@ -1,8 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { addLike, removeBlog } from '../reducers/blogReducer';
-import Blog from './Blog';
+
+const blogStyle = {
+  paddingTop: 10,
+  paddingLeft: 2,
+  border: 'solid',
+  borderWidth: 1,
+  marginBottom: 5,
+};
 
 const BlogList = (props) => (
   <div>
@@ -17,12 +25,12 @@ const BlogList = (props) => (
         return 0;
       })
       .map((blog) => (
-        <Blog
+        <div
+          style={blogStyle}
           key={blog.id}
-          blog={blog}
-          addLike={props.addLike}
-          deleteBlog={props.removeBlog}
-        />
+        >
+          <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+        </div>
       ))}
   </div>
 );

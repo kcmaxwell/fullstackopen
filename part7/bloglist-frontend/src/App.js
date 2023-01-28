@@ -13,6 +13,7 @@ import Notification from './components/Notification';
 import Users from './components/Users';
 import Home from './components/Home';
 import User from './components/User';
+import Blog from './components/Blog';
 
 const App = (props) => {
   const {
@@ -27,9 +28,14 @@ const App = (props) => {
 
   const blogFormRef = useRef();
 
-  const match = useMatch('/users/:id');
-  const matchedUser = match
-    ? props.users.find((u) => u.id === match.params.id)
+  const userMatch = useMatch('/users/:id');
+  const matchedUser = userMatch
+    ? props.users.find((u) => u.id === userMatch.params.id)
+    : null;
+
+  const blogMatch = useMatch('/blogs/:id');
+  const matchedBlog = blogMatch
+    ? props.blogs.find((b) => b.id === blogMatch.params.id)
     : null;
 
   useEffect(() => {
@@ -111,6 +117,10 @@ const App = (props) => {
         <Route
           path='/users'
           element={<Users />}
+        />
+        <Route
+          path='/blogs/:id'
+          element={<Blog blog={matchedBlog} />}
         />
         <Route
           path='/'

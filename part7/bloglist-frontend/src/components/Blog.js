@@ -1,65 +1,51 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { addLike, removeBlog } from '../reducers/blogReducer';
 
-const Blog = ({ blog, addLike, deleteBlog }) => {
-  const [visible, setVisible] = useState(false);
+const Blog = (props) => {
+  const { blog } = props;
 
-  // const hideWhenVisible = { display: visible ? 'none' : '' };
-  const showWhenVisible = { display: visible ? '' : 'none' };
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  };
+  if (!blog) return null;
 
   return (
-    <div style={blogStyle}>
-      <div className='blog-content'>
-        {blog.title}
-        {' by '}
-        {blog.author}
+    <div>
+      <h2>{blog.title}</h2>
+
+      <div>{blog.url}</div>
+      <div>
+        {blog.likes}
         <button
-          className='show-button'
-          onClick={() => setVisible(!visible)}
+          className='like-button'
+          onClick={() => props.addLike(blog)}
         >
-          {visible ? 'hide' : 'view'}
+          Like
         </button>
       </div>
-      <div
-        style={showWhenVisible}
-        className='hidden-content'
-      >
-        <div>{blog.url}</div>
-        <div id='likes'>
-          Likes: {blog.likes}{' '}
-          <button
-            className='like-button'
-            onClick={() => addLike(blog)}
-          >
-            Like
-          </button>
-        </div>
-        <div>{blog.user.name}</div>
-        <div>
-          <button
-            id='delete-button'
-            onClick={() => deleteBlog(blog)}
-          >
-            Remove
-          </button>
-        </div>
+      <div>Added by {blog.user.name}</div>
+      <div>
+        <button
+          id='delete-button'
+          onClick={() => props.removeBlog(blog)}
+        >
+          Remove
+        </button>
       </div>
     </div>
   );
 };
 
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
+  blog: PropTypes.object,
   addLike: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired,
+  removeBlog: PropTypes.func.isRequired,
 };
 
-export default Blog;
+const mapDispatchToProps = {
+  addLike,
+  removeBlog,
+};
+
+const ConnectedBlog = connect(null, mapDispatchToProps)(Blog);
+
+export default ConnectedBlog;
