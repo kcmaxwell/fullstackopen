@@ -5,12 +5,22 @@ import User from './User';
 
 const UserList = (props) => (
   <div>
-    {props.users.map((user) => (
-      <User
-        key={user.id}
-        user={user}
-      />
-    ))}
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Blogs Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {props.users.map((user) => (
+          <User
+            key={user.id}
+            user={user}
+          />
+        ))}
+      </tbody>
+    </table>
   </div>
 );
 
