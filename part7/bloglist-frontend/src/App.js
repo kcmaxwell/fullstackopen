@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useMatch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setNotification } from './reducers/notificationReducer';
 import { initializeBlogs } from './reducers/blogReducer';
@@ -9,11 +9,10 @@ import { setUserAction } from './reducers/userReducer';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import LoginForm from './components/LoginForm';
-import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
-import Togglable from './components/Togglable';
 import Users from './components/Users';
 import Home from './components/Home';
+import User from './components/User';
 
 const App = (props) => {
   const {
@@ -27,6 +26,11 @@ const App = (props) => {
   const [password, setPassword] = useState('');
 
   const blogFormRef = useRef();
+
+  const match = useMatch('/users/:id');
+  const matchedUser = match
+    ? props.users.find((u) => u.id === match.params.id)
+    : null;
 
   useEffect(() => {
     initBlogs();
@@ -101,21 +105,23 @@ const App = (props) => {
       <h2>Blogs</h2>
       <Routes>
         <Route
+          path='/users/:id'
+          element={<User user={matchedUser} />}
+        />
+        <Route
           path='/users'
           element={<Users />}
         />
         <Route
           path='/'
-          element={<Home />}
+          element={
+            <Home
+              addBlog={addBlog}
+              blogFormRef={blogFormRef}
+            />
+          }
         />
       </Routes>
-
-      <Togglable
-        buttonLabel='Add new blog'
-        ref={blogFormRef}
-      >
-        <BlogForm addBlog={addBlog} />
-      </Togglable>
     </div>
   );
 };
@@ -133,12 +139,14 @@ App.propTypes = {
       likes: PropTypes.number,
     })
   ),
+  users: PropTypes.arrayOf(PropTypes.object),
   user: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
   blogs: state.blogs,
   user: state.user,
+  users: state.users,
 });
 
 const mapDispatchToProps = {
