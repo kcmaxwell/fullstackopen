@@ -61,4 +61,18 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
   }
 });
 
+// route for posting a new comment
+// request.body should be a new comment as a string
+blogsRouter.post('/:id/comments', middleware.userExtractor, async (request, response) => {
+  const blog = await Blog.findById(request.params.id);
+
+  if (blog) {
+    blog.comments.push(request.body);
+    await blog.save();
+    response.json(blog);
+  } else {
+    response.status(404).end();
+  }
+});
+
 module.exports = blogsRouter;
