@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Routes, Route, useMatch } from 'react-router-dom';
+import { Routes, Route, Link, useMatch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setNotification } from './reducers/notificationReducer';
 import { initializeBlogs } from './reducers/blogReducer';
@@ -106,6 +106,11 @@ const App = (props) => {
   }
   return (
     <div>
+      <div>
+        <Link to='/'>Home</Link>
+        <Link to='/users'>Users</Link>
+      </div>
+
       <Notification isError={false} />
       <Notification isError={true} />
       <h2>Blogs</h2>
