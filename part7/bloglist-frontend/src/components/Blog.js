@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { addLike, removeBlog } from '../reducers/blogReducer';
 
 const Blog = (props) => {
+  const dispatch = useDispatch();
+
   const { blog } = props;
 
   if (!blog) return null;
@@ -17,7 +19,7 @@ const Blog = (props) => {
         {blog.likes}
         <button
           className='like-button'
-          onClick={() => props.addLike(blog)}
+          onClick={() => dispatch(addLike(blog))}
         >
           Like
         </button>
@@ -26,7 +28,7 @@ const Blog = (props) => {
       <div>
         <button
           id='delete-button'
-          onClick={() => props.removeBlog(blog)}
+          onClick={() => dispatch(removeBlog(blog))}
         >
           Remove
         </button>
@@ -37,15 +39,6 @@ const Blog = (props) => {
 
 Blog.propTypes = {
   blog: PropTypes.object,
-  addLike: PropTypes.func.isRequired,
-  removeBlog: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = {
-  addLike,
-  removeBlog,
-};
-
-const ConnectedBlog = connect(null, mapDispatchToProps)(Blog);
-
-export default ConnectedBlog;
+export default Blog;

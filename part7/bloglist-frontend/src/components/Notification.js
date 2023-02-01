@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 function Notification(props) {
-  const notification = props.isError
-    ? props.notification.errorMessage
-    : props.notification.successMessage;
+  const notification = useSelector((state) => state.notification);
+
+  const message = props.isError
+    ? notification.errorMessage
+    : notification.successMessage;
 
   const style = {
     color: 'green',
@@ -24,7 +26,7 @@ function Notification(props) {
     className = 'error-message';
   }
 
-  if (notification === null || notification === '') {
+  if (message === null || message === '') {
     return null;
   }
 
@@ -33,20 +35,13 @@ function Notification(props) {
       className={className}
       style={style}
     >
-      {notification}
+      {message}
     </div>
   );
 }
 
 Notification.propTypes = {
-  notification: PropTypes.object,
   isError: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-  notification: state.notification,
-});
-
-const ConnectedNotification = connect(mapStateToProps)(Notification);
-
-export default ConnectedNotification;
+export default Notification;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
 import { Routes, Route, Link, useMatch } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { setNotification } from './reducers/notificationReducer';
 import { initializeBlogs } from './reducers/blogReducer';
 import { initializeUsers } from './reducers/usersReducer';
@@ -15,12 +14,12 @@ import Home from './components/Home';
 import User from './components/User';
 import Blog from './components/Blog';
 
-const App = (props) => {
-  const {
-    initializeBlogs: initBlogs,
-    initializeUsers: initUsers,
-    user,
-  } = props;
+const App = () => {
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.user);
+  const users = useSelector((state) => state.users);
+  const reduxBlogs = useSelector((state) => state.blogs);
 
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
@@ -30,32 +29,32 @@ const App = (props) => {
 
   const userMatch = useMatch('/users/:id');
   const matchedUser = userMatch
-    ? props.users.find((u) => u.id === userMatch.params.id)
+    ? users.find((u) => u.id === userMatch.params.id)
     : null;
 
   const blogMatch = useMatch('/blogs/:id');
   const matchedBlog = blogMatch
-    ? props.blogs.find((b) => b.id === blogMatch.params.id)
+    ? reduxBlogs.find((b) => b.id === blogMatch.params.id)
     : null;
 
   useEffect(() => {
-    initBlogs();
-  }, [initBlogs]);
+    dispatch(initializeBlogs());
+  });
 
   useEffect(() => {
-    initUsers();
-  }, [initUsers]);
+    dispatch(initializeUsers());
+  });
 
   useEffect(() => {
     if (user) blogService.setToken(user.token);
   }, [user]);
 
   const displayErrorMessage = (message) => {
-    props.setNotification(message, true, 5);
+    dispatch(setNotification(message, true, 5));
   };
 
   const displaySuccessMessage = (message) => {
-    props.setNotification(message, false, 5);
+    dispatch(setNotification(message, false, 5));
   };
 
   const handleLogin = async (event) => {
@@ -66,7 +65,7 @@ const App = (props) => {
         username,
         password,
       });
-      props.setUserAction(newUser);
+      dispatch(setUserAction(newUser));
       blogService.setToken(newUser.token);
 
       displaySuccessMessage(`${newUser.name} logged in`);
@@ -89,7 +88,7 @@ const App = (props) => {
     blogFormRef.current.toggleVisibility();
   };
 
-  if (props.user === null) {
+  if (user === null) {
     return (
       <div>
         <Notification isError={false} />
@@ -141,36 +140,4 @@ const App = (props) => {
   );
 };
 
-App.propTypes = {
-  setNotification: PropTypes.func.isRequired,
-  initializeBlogs: PropTypes.func.isRequired,
-  setUserAction: PropTypes.func.isRequired,
-  initializeUsers: PropTypes.func.isRequired,
-  blogs: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string,
-      author: PropTypes.string,
-      url: PropTypes.string,
-      likes: PropTypes.number,
-    })
-  ),
-  users: PropTypes.arrayOf(PropTypes.object),
-  user: PropTypes.object,
-};
-
-const mapStateToProps = (state) => ({
-  blogs: state.blogs,
-  user: state.user,
-  users: state.users,
-});
-
-const mapDispatchToProps = {
-  setNotification,
-  initializeBlogs,
-  setUserAction,
-  initializeUsers,
-};
-
-const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App);
-
-export default ConnectedApp;
+export default App;

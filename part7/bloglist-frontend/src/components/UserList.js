@@ -1,43 +1,32 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-const UserList = (props) => (
-  <div>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Blogs Created</th>
-        </tr>
-      </thead>
-      <tbody>
-        {props.users.map((user) => (
-          <tr key={user.id}>
-            <th>
-              <Link to={`/users/${user.id}`}>{user.name}</Link>
-            </th>
-            <th>{user.blogs.length}</th>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
+const UserList = () => {
+  const users = useSelector((state) => state.users);
 
-UserList.propTypes = {
-  users: PropTypes.arrayOf(
-    PropTypes.shape({
-      username: PropTypes.string,
-    })
-  ),
+  return (
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Blogs Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <th>
+                <Link to={`/users/${user.id}`}>{user.name}</Link>
+              </th>
+              <th>{user.blogs.length}</th>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 
-const mapStateToProps = (state) => ({
-  users: state.users,
-});
-
-const ConnectedUserList = connect(mapStateToProps)(UserList);
-
-export default ConnectedUserList;
+export default UserList;
