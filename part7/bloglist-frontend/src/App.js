@@ -39,11 +39,11 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs());
-  });
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(initializeUsers());
-  });
+  }, [dispatch]);
 
   useEffect(() => {
     if (user) blogService.setToken(user.token);

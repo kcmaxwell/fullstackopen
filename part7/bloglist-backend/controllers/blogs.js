@@ -67,9 +67,13 @@ blogsRouter.post('/:id/comments', middleware.userExtractor, async (request, resp
   const blog = await Blog.findById(request.params.id);
 
   if (blog) {
-    blog.comments.push(request.body);
-    await blog.save();
-    response.json(blog);
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      blog.id,
+      { comments: blog.comments.concat(request.body.comment) },
+      { new: true },
+    );
+    await updatedBlog.populate('user');
+    response.json(updatedBlog);
   } else {
     response.status(404).end();
   }

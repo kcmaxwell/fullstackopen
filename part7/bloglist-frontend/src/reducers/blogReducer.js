@@ -46,4 +46,9 @@ export const addLike = (blog) => async (dispatch) => {
   dispatch(setNotification('Liked blog', false, 5));
 };
 
+export const addComment = (blog, comment) => async (dispatch) => {
+  const updatedBlog = await blogService.addComment(blog, comment);
+  dispatch(replaceBlog(updatedBlog));
+};
+
 export default blogSlice.reducer;

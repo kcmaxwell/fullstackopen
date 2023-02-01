@@ -1,10 +1,7 @@
-POST http://localhost:3003/api/blogs
+POST http://localhost:3003/api/blogs/63d9f5632ebc4e8421a7975e/comments
 content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImtjbWF4d2VsbCIsImlkIjoiNjNiZTJlNzBiOGNmNzc4MDQ3MjljMmQyIiwiaWF0IjoxNjczNDg4ODE2fQ.F56Mv1pO7hF5zs_Wgn5RaEbmhFHDuq59AGd2iMhm7xc
 
 {
-    "title": "Title",
-    "author": "Kristopher Maxwell",
-    "url": "/test",
-    "likes": 5
+    "comment": "test comment from VSCode"
 }

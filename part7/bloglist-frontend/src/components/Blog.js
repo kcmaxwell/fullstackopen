@@ -1,12 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { addLike, removeBlog } from '../reducers/blogReducer';
+import { addLike, removeBlog, addComment } from '../reducers/blogReducer';
+import CommentForm from './CommentForm';
 
 const Blog = (props) => {
   const dispatch = useDispatch();
 
   const { blog } = props;
+
+  const addBlogComment = (comment) => {
+    dispatch(addComment(blog, comment));
+  };
 
   if (!blog) return null;
 
@@ -33,6 +38,14 @@ const Blog = (props) => {
           Remove
         </button>
       </div>
+
+      <h2>Comments</h2>
+      <CommentForm addComment={addBlogComment} />
+      <ul>
+        {blog.comments.map((comment, index) => (
+          <li key={comment.concat(index)}>{comment}</li>
+        ))}
+      </ul>
     </div>
   );
 };
