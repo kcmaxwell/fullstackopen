@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Form, Button } from 'react-bootstrap';
 
 function BlogForm({ addBlog }) {
   const [title, setTitle] = useState('');
@@ -10,7 +11,9 @@ function BlogForm({ addBlog }) {
     event.preventDefault();
 
     addBlog({
-      title, author, url,
+      title,
+      author,
+      url,
     });
 
     setTitle('');
@@ -21,33 +24,44 @@ function BlogForm({ addBlog }) {
   return (
     <div>
       <h2>Create new blog</h2>
-      <form onSubmit={createBlog}>
-        <div>
-          Title:
-          <input
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-            id='title-input'
-          />
-        </div>
-        <div>
-          Author:
-          <input
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-            id='author-input'
-          />
-        </div>
-        <div>
-          URL:
-          <input
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-            id='url-input'
-          />
-        </div>
-        <button type="submit" id='create-blog-button'>Create</button>
-      </form>
+      <Form onSubmit={createBlog}>
+        <Form.Group>
+          <div>
+            <Form.Label>Title:</Form.Label>
+            <Form.Control
+              type='text'
+              value={title}
+              onChange={({ target }) => setTitle(target.value)}
+              id='title-input'
+            />
+          </div>
+          <div>
+            <Form.Label>Author:</Form.Label>
+            <Form.Control
+              type='text'
+              value={author}
+              onChange={({ target }) => setAuthor(target.value)}
+              id='author-input'
+            />
+          </div>
+          <div>
+            <Form.Label>URL:</Form.Label>
+            <Form.Control
+              type='text'
+              value={url}
+              onChange={({ target }) => setUrl(target.value)}
+              id='url-input'
+            />
+          </div>
+          <Button
+            type='submit'
+            id='create-blog-button'
+            className='mt-2'
+          >
+            Create
+          </Button>
+        </Form.Group>
+      </Form>
     </div>
   );
 }

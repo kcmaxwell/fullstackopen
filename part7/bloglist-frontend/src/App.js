@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Routes, Route, Link, useMatch } from 'react-router-dom';
+import { Routes, Route, useMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setNotification } from './reducers/notificationReducer';
 import { initializeBlogs } from './reducers/blogReducer';
@@ -13,6 +13,7 @@ import Users from './components/Users';
 import Home from './components/Home';
 import User from './components/User';
 import Blog from './components/Blog';
+import Navigation from './components/Navigation';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -90,7 +91,7 @@ const App = () => {
 
   if (user === null) {
     return (
-      <div>
+      <div className='container'>
         <Notification isError={false} />
         <Notification isError={true} />
         <LoginForm
@@ -104,11 +105,8 @@ const App = () => {
     );
   }
   return (
-    <div>
-      <div>
-        <Link to='/'>Home</Link>
-        <Link to='/users'>Users</Link>
-      </div>
+    <div className='container'>
+      <Navigation />
 
       <Notification isError={false} />
       <Notification isError={true} />

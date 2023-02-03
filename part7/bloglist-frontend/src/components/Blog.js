@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
+import { Button, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { addLike, removeBlog, addComment } from '../reducers/blogReducer';
 import CommentForm from './CommentForm';
 
@@ -22,30 +23,31 @@ const Blog = (props) => {
       <div>{blog.url}</div>
       <div>
         {blog.likes}
-        <button
-          className='like-button'
+        <Button
+          className='like-button ms-1'
           onClick={() => dispatch(addLike(blog))}
         >
           Like
-        </button>
+        </Button>
       </div>
       <div>Added by {blog.user.name}</div>
       <div>
-        <button
+        <Button
           id='delete-button'
           onClick={() => dispatch(removeBlog(blog))}
+          variant='danger'
         >
           Remove
-        </button>
+        </Button>
       </div>
 
       <h2>Comments</h2>
       <CommentForm addComment={addBlogComment} />
-      <ul>
+      <ListGroup className='mt-3'>
         {blog.comments.map((comment, index) => (
-          <li key={comment.concat(index)}>{comment}</li>
+          <ListGroupItem key={comment.concat(index)}>{comment}</ListGroupItem>
         ))}
-      </ul>
+      </ListGroup>
     </div>
   );
 };

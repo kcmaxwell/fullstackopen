@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Button, Form } from 'react-bootstrap';
 
 const CommentForm = ({ addComment }) => {
   const [comment, setComment] = useState('');
@@ -14,18 +15,22 @@ const CommentForm = ({ addComment }) => {
 
   return (
     <div>
-      <form onSubmit={submitComment}>
-        <input
-          value={comment}
-          onChange={({ target }) => setComment(target.value)}
-        />
-        <button
-          type='submit'
-          id='add-comment-button'
-        >
-          Add Comment
-        </button>
-      </form>
+      <Form onSubmit={submitComment}>
+        <Form.Group>
+          <Form.Control
+            type='text'
+            value={comment}
+            onChange={({ target }) => setComment(target.value)}
+          />
+          <Button
+            type='submit'
+            id='add-comment-button'
+            className='mt-2'
+          >
+            Add Comment
+          </Button>
+        </Form.Group>
+      </Form>
     </div>
   );
 };
