@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useMutation } from '@apollo/client';
 import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS } from '../queries';
 
@@ -11,6 +12,18 @@ const NewBook = (props) => {
 
   const [addBook] = useMutation(ADD_BOOK, {
     refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }],
+    onError: ({ graphQLErrors, networkError }) => {
+      if (graphQLErrors) {
+        const messages = [];
+        graphQLErrors.forEach(({ message, locations, path }) =>
+          messages.push(
+            `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+          )
+        );
+        props.setError(messages.join('\n'));
+      }
+      if (networkError) props.setError(`Please fill all fields.`);
+    },
   });
 
   if (!props.show) {
@@ -78,6 +91,11 @@ const NewBook = (props) => {
       </form>
     </div>
   );
+};
+
+NewBook.propTypes = {
+  show: PropTypes.bool.isRequired,
+  setError: PropTypes.func.isRequired,
 };
 
 export default NewBook;
