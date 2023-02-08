@@ -65,29 +65,33 @@ const Authors = (props) => {
         </tbody>
       </table>
 
-      <h3>Set Birthyear</h3>
-      <form onSubmit={handleSetBirthyear}>
-        <div>
-          Name:{' '}
-          <Select
-            defaultValue={author}
-            onChange={(data) => setAuthor(data.value)}
-            options={result.data.allAuthors.map((a) => ({
-              value: a.name,
-              label: a.name,
-            }))}
-          />
-        </div>
-        <div>
-          Born:{' '}
-          <input
-            type='number'
-            value={birthyear}
-            onChange={({ target }) => setBirthyear(target.value)}
-          />
-        </div>
-        <button type='submit'>Update Author</button>
-      </form>
+      {!props.login && (
+        <>
+          <h3>Set Birthyear</h3>
+          <form onSubmit={handleSetBirthyear}>
+            <div>
+              Name:{' '}
+              <Select
+                defaultValue={author}
+                onChange={(data) => setAuthor(data.value)}
+                options={result.data.allAuthors.map((a) => ({
+                  value: a.name,
+                  label: a.name,
+                }))}
+              />
+            </div>
+            <div>
+              Born:{' '}
+              <input
+                type='number'
+                value={birthyear}
+                onChange={({ target }) => setBirthyear(target.value)}
+              />
+            </div>
+            <button type='submit'>Update Author</button>
+          </form>
+        </>
+      )}
     </div>
   );
 };
@@ -95,21 +99,7 @@ const Authors = (props) => {
 Authors.propTypes = {
   show: PropTypes.bool.isRequired,
   setError: PropTypes.func.isRequired,
+  login: PropTypes.bool.isRequired,
 };
 
 export default Authors;
-{
-  /* <select
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-          >
-            {result.data.allAuthors.map((a) => (
-              <option
-                key={a.id.concat('select')}
-                value={a.name}
-              >
-                {a.name}
-              </option>
-            ))}
-          </select> */
-}
