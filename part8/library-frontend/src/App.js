@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Authors from './components/Authors';
 import Books from './components/Books';
 import LoginForm from './components/LoginForm';
@@ -13,6 +13,12 @@ const App = () => {
 
   const client = useApolloClient();
 
+  useEffect(() => {
+    if (!token) {
+      setToken(localStorage.getItem('library-user-token'));
+    }
+  }, [token]);
+
   const notify = (message) => {
     setErrorMessage(message);
     setTimeout(() => {
@@ -24,6 +30,7 @@ const App = () => {
     setToken(null);
     localStorage.clear();
     client.resetStore();
+    setPage('authors');
   };
 
   return (
@@ -58,6 +65,7 @@ const App = () => {
         show={page === 'login'}
         setError={notify}
         setToken={setToken}
+        setPage={setPage}
       />
     </div>
   );

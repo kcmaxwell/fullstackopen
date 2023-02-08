@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useMutation } from '@apollo/client';
 import { LOGIN } from '../queries';
 
-const LoginForm = ({ show, setError, setToken }) => {
+const LoginForm = ({ show, setError, setToken, setPage }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -25,6 +25,7 @@ const LoginForm = ({ show, setError, setToken }) => {
     e.preventDefault();
 
     login({ variables: { username, password } });
+    setPage('authors');
 
     setUsername('');
     setPassword('');
@@ -36,6 +37,8 @@ const LoginForm = ({ show, setError, setToken }) => {
 
   return (
     <div>
+      <h2>Login</h2>
+
       <form onSubmit={handleLogin}>
         <div>
           <label>Username: </label>
@@ -63,6 +66,7 @@ LoginForm.propTypes = {
   show: PropTypes.bool.isRequired,
   setError: PropTypes.func.isRequired,
   setToken: PropTypes.func.isRequired,
+  setPage: PropTypes.func.isRequired,
 };
 
 export default LoginForm;

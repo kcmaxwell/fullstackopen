@@ -11,7 +11,7 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([]);
 
   const [addBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }],
+    refetchQueries: [{ query: ALL_AUTHORS }],
     onError: ({ graphQLErrors, networkError }) => {
       if (graphQLErrors) {
         const messages = [];
@@ -23,6 +23,13 @@ const NewBook = (props) => {
         props.setError(messages.join('\n'));
       }
       if (networkError) props.setError(`Please fill all fields.`);
+    },
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(response.data.addBook),
+        };
+      });
     },
   });
 
@@ -51,6 +58,8 @@ const NewBook = (props) => {
 
   return (
     <div>
+      <h2>Add Book</h2>
+
       <form onSubmit={submit}>
         <div>
           title
