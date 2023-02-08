@@ -6,12 +6,6 @@ import { ALL_BOOKS } from '../queries';
 const Books = (props) => {
   const result = useQuery(ALL_BOOKS);
 
-  const getUniqueGenres = (allBooks) => {
-    const uniqueGenres = new Set();
-    allBooks.map((book) => book.genres.map((genre) => uniqueGenres.add(genre)));
-    return Array.from(uniqueGenres);
-  };
-
   if (!props.show) {
     return null;
   }
@@ -22,7 +16,9 @@ const Books = (props) => {
 
   return (
     <div>
-      <h2>Books</h2>
+      <h2>Recommendations</h2>
+
+      <p>Books in your favourite genre</p>
 
       <table>
         <tbody>
@@ -40,11 +36,6 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
-
-      {getUniqueGenres(result.data.allBooks).map((genre) => (
-        <button key={genre.concat('Button')}>{genre}</button>
-      ))}
-      <button>All Genres</button>
     </div>
   );
 };
