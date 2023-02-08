@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from '@apollo/client';
-import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS } from '../queries';
+import {
+  ADD_BOOK,
+  ALL_AUTHORS,
+  ALL_BOOKS_BY_GENRE,
+  FAVOURITE_BOOKS,
+  UNIQUE_GENRES,
+} from '../queries';
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('');
@@ -11,7 +17,11 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([]);
 
   const [addBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
+    refetchQueries: [
+      { query: ALL_AUTHORS },
+      { query: FAVOURITE_BOOKS },
+      { query: UNIQUE_GENRES },
+    ],
     onError: ({ graphQLErrors, networkError }) => {
       if (graphQLErrors) {
         const messages = [];
@@ -25,10 +35,27 @@ const NewBook = (props) => {
       if (networkError) props.setError(`Please fill all fields.`);
     },
     update: (cache, response) => {
-      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
-        return {
-          allBooks: allBooks.concat(response.data.addBook),
-        };
+      cache.updateQuery(
+        { query: ALL_BOOKS_BY_GENRE, variables: { genre: '' } },
+        (data) => {
+          if (data)
+            return {
+              allBooks: data.allBooks.concat(response.data.addBook),
+            };
+        }
+      );
+
+      // update each query for the genres of the given book
+      response.data.addBook.genres.forEach((genre) => {
+        cache.updateQuery(
+          { query: ALL_BOOKS_BY_GENRE, variables: { genre } },
+          (data) => {
+            if (data)
+              return {
+                allBooks: data.allBooks.concat(response.data.addBook),
+              };
+          }
+        );
       });
     },
   });

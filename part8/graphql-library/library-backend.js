@@ -144,6 +144,8 @@ const typeDefs = `
     bookCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
+    favouriteBooks: [Book!]!
+    uniqueGenres: [String!]!
     allAuthors: [Author!]!
     me: User
   }
@@ -182,6 +184,24 @@ const resolvers = {
         options.genres = args.genre;
 
       return Book.find(options).populate('author');
+    },
+    favouriteBooks: async (root, args, context) => {
+      const currentUser = context.currentUser;
+      if (!currentUser) {
+        throw new GraphQLError('Not authenticated', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        })
+      }
+
+      return Book.find({ genres: currentUser.favouriteGenre }).populate('author');
+    },
+    uniqueGenres: async () => {
+      const uniqueGenres = new Set();
+      const allBooks = await Book.find({});
+      allBooks.map((book) => book.genres.map((genre) => uniqueGenres.add(genre)));
+      return Array.from(uniqueGenres);
     },
     allAuthors: async () => Author.find({}),
     me: (root, args, context) => {

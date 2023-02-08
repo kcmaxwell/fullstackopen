@@ -25,6 +25,49 @@ export const ALL_BOOKS = gql`
   }
 `;
 
+export const ALL_BOOKS_BY_GENRE = gql`
+  query allBooksByGenre($genre: String) {
+    allBooks(genre: $genre) {
+      title
+      author {
+        name
+      }
+      published
+      genres
+      id
+    }
+  }
+`;
+
+export const FAVOURITE_BOOKS = gql`
+  query {
+    favouriteBooks {
+      title
+      author {
+        name
+      }
+      published
+      genres
+      id
+    }
+  }
+`;
+
+export const UNIQUE_GENRES = gql`
+  query {
+    uniqueGenres
+  }
+`;
+
+export const ME = gql`
+  query {
+    me {
+      username
+      favouriteGenre
+    }
+  }
+`;
+
 export const ADD_BOOK = gql`
   mutation addBook(
     $title: String!

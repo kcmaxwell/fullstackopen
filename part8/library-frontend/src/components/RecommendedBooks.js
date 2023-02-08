@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
-import { ALL_BOOKS } from '../queries';
+import { FAVOURITE_BOOKS } from '../queries';
 
-const Books = (props) => {
-  const result = useQuery(ALL_BOOKS);
+const RecommendedBooks = (props) => {
+  const result = useQuery(FAVOURITE_BOOKS);
 
   if (!props.show) {
     return null;
@@ -20,28 +20,33 @@ const Books = (props) => {
 
       <p>Books in your favourite genre</p>
 
-      <table>
-        <tbody>
-          <tr>
-            <th></th>
-            <th>author</th>
-            <th>published</th>
-          </tr>
-          {result.data.allBooks.map((a) => (
-            <tr key={a.id}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
+      {result.data.favouriteBooks.length > 0 ? (
+        <table>
+          <tbody>
+            <tr>
+              <th></th>
+              <th>author</th>
+              <th>published</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+
+            {result.data.favouriteBooks.map((a) => (
+              <tr key={a.id}>
+                <td>{a.title}</td>
+                <td>{a.author.name}</td>
+                <td>{a.published}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <div>No books found!</div>
+      )}
     </div>
   );
 };
 
-Books.propTypes = {
+RecommendedBooks.propTypes = {
   show: PropTypes.bool.isRequired,
 };
 
-export default Books;
+export default RecommendedBooks;

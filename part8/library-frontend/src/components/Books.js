@@ -1,22 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
-import { ALL_BOOKS } from '../queries';
+import { ALL_BOOKS_BY_GENRE, UNIQUE_GENRES } from '../queries';
 
 const Books = (props) => {
-  const result = useQuery(ALL_BOOKS);
+  const [genre, setGenre] = useState('');
 
-  const getUniqueGenres = (allBooks) => {
-    const uniqueGenres = new Set();
-    allBooks.map((book) => book.genres.map((genre) => uniqueGenres.add(genre)));
-    return Array.from(uniqueGenres);
-  };
+  const result = useQuery(ALL_BOOKS_BY_GENRE, {
+    variables: { genre },
+  });
+  const uniqueGenresResult = useQuery(UNIQUE_GENRES);
 
   if (!props.show) {
     return null;
   }
 
-  if (result.loading) {
+  if (result.loading || uniqueGenresResult.loading) {
     return <div>Loading...</div>;
   }
 
@@ -41,10 +40,15 @@ const Books = (props) => {
         </tbody>
       </table>
 
-      {getUniqueGenres(result.data.allBooks).map((genre) => (
-        <button key={genre.concat('Button')}>{genre}</button>
+      {uniqueGenresResult.data.uniqueGenres.map((uniqueGenre) => (
+        <button
+          key={uniqueGenre.concat('Button')}
+          onClick={() => setGenre(uniqueGenre)}
+        >
+          {uniqueGenre}
+        </button>
       ))}
-      <button>All Genres</button>
+      <button onClick={() => setGenre('')}>All Genres</button>
     </div>
   );
 };
