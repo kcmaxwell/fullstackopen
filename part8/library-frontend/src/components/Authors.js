@@ -45,6 +45,8 @@ const Authors = (props) => {
     return <div>Loading...</div>;
   }
 
+  console.log(result);
+
   return (
     <div>
       <h2>Authors</h2>

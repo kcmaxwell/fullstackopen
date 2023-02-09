@@ -149,12 +149,13 @@ const resolvers = {
   },
   Author: {
     // not yet setup for mongoose
-    bookCount: (root) =>
-      books.reduce(
-        (acc, book) => (book.author === root.name ? acc + 1 : acc),
-        0
-      ),
-    // bookCount: async (root) => Book.collection.countDocuments({ author: root.id })
+    // bookCount: (root) =>
+    //   books.reduce(
+    //     (acc, book) => (book.author === root.name ? acc + 1 : acc),
+    //     0
+    //   ),
+    bookCount: async (root) =>
+      Book.collection.countDocuments({ author: root.id }),
   },
 };
 

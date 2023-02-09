@@ -1,18 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Notification = ({ errorMessage }) => {
+const Notification = ({ message, isError }) => {
   const errorStyle = {
     color: 'red',
   };
 
-  if (errorMessage === null) return null;
+  const messageStyle = {
+    color: 'green',
+  };
 
-  return <div style={errorStyle}>{errorMessage}</div>;
+  if (message === null) return null;
+
+  return <div style={isError ? errorStyle : messageStyle}>{message}</div>;
 };
 
 Notification.propTypes = {
-  errorMessage: PropTypes.string,
+  message: PropTypes.string,
+  isError: PropTypes.bool.isRequired,
 };
 
 export default Notification;

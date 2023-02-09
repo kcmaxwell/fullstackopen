@@ -8,6 +8,7 @@ import {
   FAVOURITE_BOOKS,
   UNIQUE_GENRES,
 } from '../queries';
+import { updateCache } from '../App';
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('');
@@ -35,26 +36,21 @@ const NewBook = (props) => {
       if (networkError) props.setError(`Please fill all fields.`);
     },
     update: (cache, response) => {
-      cache.updateQuery(
-        { query: ALL_BOOKS_BY_GENRE, variables: { genre: '' } },
-        (data) => {
-          if (data)
-            return {
-              allBooks: data.allBooks.concat(response.data.addBook),
-            };
-        }
+      updateCache(
+        cache,
+        {
+          query: ALL_BOOKS_BY_GENRE,
+          variables: { genre: '' },
+        },
+        response.data.addBook
       );
 
       // update each query for the genres of the given book
       response.data.addBook.genres.forEach((genre) => {
-        cache.updateQuery(
+        updateCache(
+          cache,
           { query: ALL_BOOKS_BY_GENRE, variables: { genre } },
-          (data) => {
-            if (data)
-              return {
-                allBooks: data.allBooks.concat(response.data.addBook),
-              };
-          }
+          response.data.addBook
         );
       });
     },
