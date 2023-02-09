@@ -61,6 +61,7 @@ const resolvers = {
       if (!author) {
         author = new Author({ name: authorName });
       }
+      author.books = author.books.concat(book.id);
 
       const book = new Book({ ...authorArgs, author });
 
@@ -148,14 +149,8 @@ const resolvers = {
     },
   },
   Author: {
-    // not yet setup for mongoose
-    // bookCount: (root) =>
-    //   books.reduce(
-    //     (acc, book) => (book.author === root.name ? acc + 1 : acc),
-    //     0
-    //   ),
-    bookCount: async (root) =>
-      Book.collection.countDocuments({ author: root.id }),
+    bookCount: (root, args, { loaders }) =>
+      loaders.bookCountLoader.load(root.id),
   },
 };
 
