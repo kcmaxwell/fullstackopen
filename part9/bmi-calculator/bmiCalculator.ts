@@ -1,3 +1,5 @@
+import { parseBmiArguments, handleError } from './utils';
+
 const calculateBmi = (height: number, weight: number): string => {
   const heightInMetres = height / 100;
   const bmi = weight / Math.pow(heightInMetres, 2);
@@ -12,4 +14,9 @@ const calculateBmi = (height: number, weight: number): string => {
   if (bmi >= 40.0) return 'Obese (Class III)';
 };
 
-console.log(calculateBmi(182, 68));
+try {
+  const { height, weight } = parseBmiArguments(process.argv);
+  console.log(calculateBmi(height, weight));
+} catch (error: unknown) {
+  handleError(error);
+}

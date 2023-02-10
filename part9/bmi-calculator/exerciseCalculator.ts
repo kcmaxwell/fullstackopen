@@ -1,3 +1,5 @@
+import { parseExerciseArguments, handleError } from './utils';
+
 type rating = 1 | 2 | 3;
 const ratingDescriptions = [
   'You need to exercise more',
@@ -44,4 +46,9 @@ const calculateExercises = (
   };
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+  const { exerciseHours, target } = parseExerciseArguments(process.argv);
+  console.log(calculateExercises(exerciseHours, target));
+} catch (error: unknown) {
+  handleError(error);
+}
