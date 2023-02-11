@@ -1,6 +1,6 @@
 import { parseBmiArguments, handleError } from './utils';
 
-const calculateBmi = (height: number, weight: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
   const heightInMetres = height / 100;
   const bmi = weight / Math.pow(heightInMetres, 2);
 
@@ -12,6 +12,8 @@ const calculateBmi = (height: number, weight: number): string => {
   if (bmi >= 30.0 && bmi < 35.0) return 'Obese (Class I)';
   if (bmi >= 35.0 && bmi < 40.0) return 'Obese (Class II)';
   if (bmi >= 40.0) return 'Obese (Class III)';
+
+  throw new Error('BMI could not be calculated with the given numbers.');
 };
 
 try {
