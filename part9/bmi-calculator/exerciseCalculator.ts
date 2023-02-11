@@ -23,7 +23,7 @@ const calculateRating = (average: number, target: number): rating => {
   return 2;
 };
 
-const calculateExercises = (
+export const calculateExercises = (
   exerciseHours: number[],
   target: number
 ): exerciseInfo => {
