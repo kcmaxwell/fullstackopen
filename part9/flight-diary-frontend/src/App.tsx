@@ -5,6 +5,8 @@ import {
   toNonSensitiveDiaryEntryArray,
   addCommentsToNonSensitiveDiaryEntryArray,
 } from './utils';
+import DiaryForm from './components/DiaryForm';
+import diaryService from './services/diaries';
 
 function App() {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
@@ -19,9 +21,15 @@ function App() {
     });
   }, []);
 
+  const addDiary = async (newDiary: DiaryEntry) => {
+    const response = await diaryService.addDiary(newDiary);
+    setDiaries(diaries.concat(response));
+  };
+
   return (
     <div>
       <h1>Diary</h1>
+      <DiaryForm addDiary={addDiary} />
       {diaries &&
         diaries.map((entry) => (
           <div key={entry.id}>
