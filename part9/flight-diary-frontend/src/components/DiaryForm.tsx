@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Notification from './Notification';
 import { NewDiaryEntry, Visibility, Weather } from '../types';
+import { toNewDiaryEntry } from '../utils';
 
 interface DiaryFormProps {
   addDiary(newDiary: NewDiaryEntry): void;
@@ -11,11 +12,26 @@ const DiaryForm = ({ addDiary }: DiaryFormProps) => {
   const [visibility, setVisibility] = useState<Visibility>(Visibility.Great);
   const [weather, setWeather] = useState<Weather>(Weather.Sunny);
   const [comment, setComment] = useState('');
+  const [message, setMessage] = useState('');
 
   const submit = (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    addDiary({ date, visibility, weather, comment });
+    try {
+      const newDiaryEntry = toNewDiaryEntry({
+        date,
+        visibility,
+        weather,
+        comment,
+      });
+      addDiary(newDiaryEntry);
+    } catch (error: unknown) {
+      let errorMessage = 'Error: ';
+      if (error instanceof Error) {
+        errorMessage += error.message;
+      }
+      setMessage(errorMessage);
+    }
 
     setDate('');
     setVisibility(Visibility.Great);
@@ -26,13 +42,13 @@ const DiaryForm = ({ addDiary }: DiaryFormProps) => {
   return (
     <div>
       <h2>Add new entry</h2>
-      <Notification />
+      <Notification message={message} />
 
       <form onSubmit={submit}>
         <div>
           Date:{' '}
           <input
-            type='text'
+            type='date'
             value={date}
             onChange={({ target }) => setDate(target.value)}
           />
