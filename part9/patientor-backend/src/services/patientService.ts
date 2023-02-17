@@ -6,13 +6,16 @@ import { Patient, PatientNoSSN, NewPatient } from '../types';
 const patients: Patient[] = patientsData;
 
 const getPatientsNoSSN = (): PatientNoSSN[] => {
-  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
-    id,
-    name,
-    dateOfBirth,
-    gender,
-    occupation,
-  }));
+  return patients.map(
+    ({ id, name, dateOfBirth, gender, occupation, entries }) => ({
+      id,
+      name,
+      dateOfBirth,
+      gender,
+      occupation,
+      entries,
+    })
+  );
 };
 
 const addPatient = (patient: NewPatient): Patient => {
