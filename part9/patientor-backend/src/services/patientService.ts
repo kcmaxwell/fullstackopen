@@ -18,6 +18,14 @@ const getPatientsNoSSN = (): PatientNoSSN[] => {
   );
 };
 
+const getPatient = (id: string): Patient => {
+  const patient = patients.find((element) => element.id === id);
+
+  if (patient) return patient;
+
+  throw new Error('No patient with given id');
+};
+
 const addPatient = (patient: NewPatient): Patient => {
   const newPatient = {
     id: uuid(),
@@ -30,5 +38,6 @@ const addPatient = (patient: NewPatient): Patient => {
 
 export default {
   getPatientsNoSSN,
+  getPatient,
   addPatient,
 };

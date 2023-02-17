@@ -9,11 +9,15 @@ router.get('/', (_req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-  res.send(
-    patientService
-      .getPatientsNoSSN()
-      .find((patient) => patient.id === req.params.id)
-  );
+  try {
+    res.send(patientService.getPatient(req.params.id));
+  } catch (error: unknown) {
+    let errorMessage = 'Something went wrong.';
+    if (error instanceof Error) {
+      errorMessage += ' Error: ' + error.message;
+    }
+    res.status(400).send(errorMessage);
+  }
 });
 
 router.post('/', (req, res) => {
