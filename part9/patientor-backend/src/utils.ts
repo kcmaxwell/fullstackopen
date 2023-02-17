@@ -50,22 +50,25 @@ const parseGender = (gender: unknown): Gender => {
   return gender;
 };
 
+const isEntryArray = (param: unknown): param is Entry[] => {
+  if (!param || !isObjectArray(param)) return false;
+  if (!param.every((entry: unknown) => isEntry(entry))) return false;
+  return true;
+};
+
 const isObjectArray = (param: unknown): param is object[] => {
   if (!Array.isArray(param)) return false;
   if (param.some((v) => typeof v !== 'object')) return false;
   return true;
 };
 
-const parseEntries = (object: unknown): Entry[] => {
-  if (!object || !isObjectArray(object)) {
-    throw new Error('Incorrect or missing data');
-  }
-
-  return object.map((entry: unknown) => toEntry(entry));
+const isEntry = (param: unknown): param is Entry => {
+  if (!param || typeof param !== 'object' || !('type' in param)) return false;
+  return true;
 };
 
-const toEntry = (object: unknown): Entry => {
-  if (!object || typeof object !== 'object') {
+const parseEntries = (object: unknown): Entry[] => {
+  if (!object || !isEntryArray(object)) {
     throw new Error('Incorrect or missing data');
   }
 
