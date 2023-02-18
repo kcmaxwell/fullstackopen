@@ -16,7 +16,19 @@ const getOne = async (id: string) => {
 };
 
 const create = async (object: PatientFormValues) => {
-  const { data } = await axios.post<Patient>(`${apiBaseUrl}/patients`, object);
+  const { data } = await axios.post<Patient>(`${apiBaseUrl}/patients`, {
+    ...object,
+    entries: [],
+  });
+
+  return data;
+};
+
+const addEntry = async (id: string, object: PatientFormValues) => {
+  const { data } = await axios.post<Patient>(
+    `${apiBaseUrl}/patients/${id}/entries`,
+    object
+  );
 
   return data;
 };
@@ -25,4 +37,5 @@ export default {
   getAll,
   getOne,
   create,
+  addEntry,
 };
