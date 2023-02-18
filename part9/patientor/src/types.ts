@@ -17,6 +17,14 @@ export interface Patient {
   gender: Gender;
   ssn?: string;
   dateOfBirth?: string;
+  entries: Entry[];
+}
+
+export interface Entry {
+  id: string;
+  date: string;
+  description: string;
+  diagnosisCodes?: string[];
 }
 
 export type PatientFormValues = Omit<Patient, 'id' | 'entries'>;
