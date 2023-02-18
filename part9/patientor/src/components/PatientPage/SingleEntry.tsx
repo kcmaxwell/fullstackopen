@@ -1,5 +1,6 @@
 import React from 'react';
 import { Entry } from '../../types';
+import DiagnosisListElement from './DiagnosisListElement';
 
 interface Props {
   entry: Entry;
@@ -13,7 +14,12 @@ const SingleEntry = ({ entry }: Props) => {
       </p>
       <ul>
         {entry.diagnosisCodes &&
-          entry.diagnosisCodes.map((code) => <li key={code}>{code}</li>)}
+          entry.diagnosisCodes.map((code) => (
+            <DiagnosisListElement
+              key={entry.id.concat(code)}
+              code={code}
+            />
+          ))}
       </ul>
     </div>
   );
