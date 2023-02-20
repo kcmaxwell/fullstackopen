@@ -142,23 +142,6 @@ const parseDiagnosisCodes = (object: unknown): Array<Diagnosis['code']> => {
   return object.diagnosisCodes as Array<Diagnosis['code']>;
 };
 
-// const isEntryTypes = (param: unknown): param is EntryTypes => {
-//   return isString(param) && entryTypes.includes(param as EntryTypes);
-// };
-
-// const parseType = (object: unknown): EntryTypes => {
-//   if (!isEntryTypes(object)) throw new Error('Incorrect or missing entry type');
-
-//   return object;
-// };
-
-// const parseHospitalType = (object: unknown): EntryTypes => {
-//   if (!isEntryTypes(object) || object !== 'Hospital')
-//     throw new Error('Incorrect or missing entry type');
-
-//   return object;
-// };
-
 const parseDate = (date: unknown): string => {
   if (!isString(date) || !isDate(date)) {
     throw new Error('Incorrect date: ' + date);
@@ -259,11 +242,8 @@ const toNewEntry = (object: unknown): Entry => {
     date: parseDate(object.date),
     specialist: parseSpecialist(object.specialist),
     description: parseDescription(object.description),
-    diagnosisCodes: [] as Array<Diagnosis['code']>,
+    diagnosisCodes: parseDiagnosisCodes(object),
   };
-
-  if (object.diagnosisCodes)
-    newEntry.diagnosisCodes = parseDiagnosisCodes(object.diagnosisCodes);
 
   switch (object.type) {
     case 'Hospital':

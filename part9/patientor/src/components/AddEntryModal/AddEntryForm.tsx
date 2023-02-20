@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent } from 'react';
+import React, { useState, SyntheticEvent, useEffect } from 'react';
 
 import {
   TextField,
@@ -10,10 +10,14 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   SelectChangeEvent,
+  Switch,
+  OutlinedInput,
+  Box,
+  Chip,
 } from '@mui/material';
 
-import { EntryFormValues, HealthCheckRating } from '../../types';
-import { assertNever } from '../../utils';
+import { EntryFormValues, HealthCheckRating, Diagnosis } from '../../types';
+import diagnosesService from '../../services/diagnoses';
 
 interface Props {
   onCancel: () => void;
@@ -21,27 +25,39 @@ interface Props {
 }
 
 const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
   const [type, setType] = useState<string>('Hospital');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [specialist, setSpecialist] = useState('');
-  const [diagnosisCodes, setDiagnosisCodes] = useState('');
+  const [diagnosisCodes, setDiagnosisCodes] = useState<
+    Array<Diagnosis['code']>
+  >([]);
+  const [dischargeDate, setDischargeDate] = useState('');
+  const [dischargeCriteria, setDischargeCriteria] = useState('');
   const [healthCheckRating, setHealthCheckRating] = useState<HealthCheckRating>(
     HealthCheckRating.Healthy
   );
+  const [employerName, setEmployerName] = useState('');
+  const [isSickLeave, setIsSickLeave] = useState<boolean>(false);
+  const [sickLeaveStartDate, setSickLeaveStartDate] = useState('');
+  const [sickLeaveEndDate, setSickLeaveEndDate] = useState('');
+
+  useEffect(() => {
+    const fetchDiagnosesList = async () => {
+      const fetchedDiagnoses = await diagnosesService.getAll();
+      setDiagnoses(fetchedDiagnoses);
+    };
+    void fetchDiagnosesList();
+  }, []);
 
   const onHealthCheckRatingChange = (event: SelectChangeEvent<string>) => {
     event.preventDefault();
 
-    console.log('onHealthCheckRatingChange entered');
-    console.log(event.target.value);
-
     if (typeof event.target.value === 'number') {
       const value = event.target.value;
       const rating = Object.values(HealthCheckRating).find((v) => v === value);
-      console.log('passed the event target value if');
       if (rating !== undefined && rating in HealthCheckRating) {
-        console.log('passed the second if, should set healthCheckRating');
         setHealthCheckRating(rating as HealthCheckRating);
       }
     }
@@ -52,18 +68,40 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
 
     switch (type) {
       case 'Hospital':
+        onSubmit({
+          description,
+          date,
+          specialist,
+          diagnosisCodes,
+          discharge: { date: dischargeDate, criteria: dischargeCriteria },
+          type,
+        });
         break;
       case 'HealthCheck':
         onSubmit({
           description,
           date,
           specialist,
-          diagnosisCodes: diagnosisCodes.split(','),
+          diagnosisCodes,
           healthCheckRating,
           type,
         });
         break;
       case 'OccupationalHealthcare':
+        onSubmit({
+          description,
+          date,
+          specialist,
+          diagnosisCodes,
+          employerName,
+          sickLeave: isSickLeave
+            ? {
+                startDate: sickLeaveStartDate,
+                endDate: sickLeaveEndDate,
+              }
+            : undefined,
+          type,
+        });
         break;
       default:
         return;
@@ -75,6 +113,21 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
     newType: string
   ) => {
     setType(newType);
+  };
+
+  const handleDiagnosisCodeChange = (
+    event: SelectChangeEvent<typeof diagnosisCodes>
+  ) => {
+    const {
+      target: { value },
+    } = event;
+    setDiagnosisCodes(typeof value === 'string' ? value.split(',') : value);
+  };
+
+  const handleSickLeaveChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setIsSickLeave(event.target.checked);
   };
 
   return (
@@ -101,6 +154,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
           onChange={({ target }) => setDescription(target.value)}
         />
         <TextField
+          type='date'
           label='Date'
           placeholder='YYYY-MM-DD'
           fullWidth
@@ -113,19 +167,60 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}
         />
-        <TextField
+        <Select
           label='Diagnosis Codes'
-          fullWidth
+          multiple
           value={diagnosisCodes}
-          onChange={({ target }) => setDiagnosisCodes(target.value)}
-        />
+          onChange={handleDiagnosisCodeChange}
+          input={<OutlinedInput label='Chip' />}
+          renderValue={(selected) => (
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+              {selected.map((diagnosis) => (
+                <Chip
+                  key={diagnosis}
+                  label={diagnosis}
+                />
+              ))}
+            </Box>
+          )}
+        >
+          {diagnoses.map((diagnosis) => (
+            <MenuItem
+              key={diagnosis.code}
+              value={diagnosis.code}
+            >
+              {diagnosis.code}: {diagnosis.name}
+            </MenuItem>
+          ))}
+        </Select>
 
         {type === 'Hospital' && (
           <>
-            <InputLabel id='demo-simple-select-label'>Age</InputLabel>
+            <InputLabel id='discharge-label'>Discharge</InputLabel>
+            <TextField
+              type='date'
+              label='Date'
+              fullWidth
+              value={dischargeDate}
+              onChange={({ target }) => setDischargeDate(target.value)}
+            />
+            <TextField
+              label='Criteria'
+              fullWidth
+              value={dischargeCriteria}
+              onChange={({ target }) => setDischargeCriteria(target.value)}
+            />
+          </>
+        )}
+
+        {type === 'HealthCheck' && (
+          <>
+            <InputLabel id='health-check-rating-select-label'>
+              Health Check Rating
+            </InputLabel>
             <Select
-              labelId='demo-simple-select-label'
-              id='demo-simple-select'
+              labelId='health-check-rating-select-label'
+              id='health-check-rating-select'
               value={healthCheckRating.toString()}
               label='Age'
               onChange={onHealthCheckRatingChange}
@@ -137,6 +232,40 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
                 Critical Risk
               </MenuItem>
             </Select>
+          </>
+        )}
+
+        {type === 'OccupationalHealthcare' && (
+          <>
+            <TextField
+              label='Employer'
+              fullWidth
+              value={employerName}
+              onChange={({ target }) => setEmployerName(target.value)}
+            />
+            <InputLabel id='sick-leave-label'>Sick Leave</InputLabel>
+            <Switch
+              checked={isSickLeave}
+              onChange={handleSickLeaveChange}
+            />
+            {isSickLeave && (
+              <>
+                <TextField
+                  type='date'
+                  label='Start Date'
+                  fullWidth
+                  value={sickLeaveStartDate}
+                  onChange={({ target }) => setSickLeaveStartDate(target.value)}
+                />
+                <TextField
+                  type='date'
+                  label='End Date'
+                  fullWidth
+                  value={sickLeaveEndDate}
+                  onChange={({ target }) => setSickLeaveEndDate(target.value)}
+                />
+              </>
+            )}
           </>
         )}
 
