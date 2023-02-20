@@ -7,10 +7,13 @@ import {
   Select,
   Grid,
   Button,
+  ToggleButton,
+  ToggleButtonGroup,
   SelectChangeEvent,
 } from '@mui/material';
 
 import { EntryFormValues, HealthCheckRating } from '../../types';
+import { assertNever } from '../../utils';
 
 interface Props {
   onCancel: () => void;
@@ -18,6 +21,7 @@ interface Props {
 }
 
 const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
+  const [type, setType] = useState<string>('Hospital');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [specialist, setSpecialist] = useState('');
@@ -45,19 +49,51 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
 
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
-    onSubmit({
-      description,
-      date,
-      specialist,
-      diagnosisCodes: diagnosisCodes.split(','),
-      healthCheckRating,
-      type: 'HealthCheck',
-    });
+
+    switch (type) {
+      case 'Hospital':
+        break;
+      case 'HealthCheck':
+        onSubmit({
+          description,
+          date,
+          specialist,
+          diagnosisCodes: diagnosisCodes.split(','),
+          healthCheckRating,
+          type,
+        });
+        break;
+      case 'OccupationalHealthcare':
+        break;
+      default:
+        return;
+    }
+  };
+
+  const handleTypeChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newType: string
+  ) => {
+    setType(newType);
   };
 
   return (
     <div>
       <form onSubmit={addEntry}>
+        <ToggleButtonGroup
+          color='primary'
+          value={type}
+          exclusive
+          onChange={handleTypeChange}
+          aria-label='text alignment'
+        >
+          <ToggleButton value='Hospital'>Hospital</ToggleButton>
+          <ToggleButton value='HealthCheck'>Health Check</ToggleButton>
+          <ToggleButton value='OccupationalHealthcare'>
+            Occupational Healthcare
+          </ToggleButton>
+        </ToggleButtonGroup>
+
         <TextField
           label='Description'
           fullWidth
@@ -84,21 +120,25 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
           onChange={({ target }) => setDiagnosisCodes(target.value)}
         />
 
-        <InputLabel id='demo-simple-select-label'>Age</InputLabel>
-        <Select
-          labelId='demo-simple-select-label'
-          id='demo-simple-select'
-          value={healthCheckRating.toString()}
-          label='Age'
-          onChange={onHealthCheckRatingChange}
-        >
-          <MenuItem value={HealthCheckRating.Healthy}>Healthy</MenuItem>
-          <MenuItem value={HealthCheckRating.LowRisk}>Low Risk</MenuItem>
-          <MenuItem value={HealthCheckRating.HighRisk}>High Risk</MenuItem>
-          <MenuItem value={HealthCheckRating.CriticalRisk}>
-            Critical Risk
-          </MenuItem>
-        </Select>
+        {type === 'Hospital' && (
+          <>
+            <InputLabel id='demo-simple-select-label'>Age</InputLabel>
+            <Select
+              labelId='demo-simple-select-label'
+              id='demo-simple-select'
+              value={healthCheckRating.toString()}
+              label='Age'
+              onChange={onHealthCheckRatingChange}
+            >
+              <MenuItem value={HealthCheckRating.Healthy}>Healthy</MenuItem>
+              <MenuItem value={HealthCheckRating.LowRisk}>Low Risk</MenuItem>
+              <MenuItem value={HealthCheckRating.HighRisk}>High Risk</MenuItem>
+              <MenuItem value={HealthCheckRating.CriticalRisk}>
+                Critical Risk
+              </MenuItem>
+            </Select>
+          </>
+        )}
 
         <Grid>
           <Grid item>
