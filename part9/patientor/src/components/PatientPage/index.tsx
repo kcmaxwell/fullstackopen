@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Gender, Patient, PatientFormValues } from '../../types';
+import { EntryFormValues, Gender, Patient } from '../../types';
 import patientService from '../../services/patients';
 import { Male, Female } from '@mui/icons-material';
 import EntryList from './EntryList';
@@ -24,7 +24,7 @@ const PatientPage = ({ id }: Props) => {
     setError(undefined);
   };
 
-  const submitNewEntry = async (values: PatientFormValues) => {
+  const submitNewEntry = async (values: EntryFormValues) => {
     if (!patient) return;
     try {
       const updatedPatient = await patientService.addEntry(patient.id, values);
